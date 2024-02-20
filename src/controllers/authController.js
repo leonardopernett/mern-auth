@@ -2,15 +2,13 @@
 import { ZodError } from 'zod'
 import { comparePassword, encryptPassword } from '../middleware/bcrypt.js'
 import { generarToken } from '../middleware/jwt.js'
-import { loginUserSchema, registerUserSchema } from '../middleware/validate.js'
+import { loginUserSchema } from '../middleware/validate.js'
 
 import User from '../models/User.js'
 
 export const register  = async (req,res) => {
    try {
-    const response = await registerUserSchema.parse(req.body)
     const newUser  = await User.findOne({ email:response.email }) 
-
     if(newUser){
      res.status(400).json({
         message: 'Email already exists',
@@ -34,16 +32,7 @@ export const register  = async (req,res) => {
    })
 
    } catch (error) {
-      if(error instanceof ZodError){
-        res.status(400).json(error.issues.map((item) => {
-          return {
-           message: item.message,
-           path: item.path[0],
-           code: item.code,
-          }
-       }))
-      }
-    
+      res.status(400).json(error)
    }
 } 
 
@@ -70,23 +59,13 @@ export const login  = async (req,res) => {
    }
 
    const token = await generarToken(user)
-   
    res.cookie('token', token)
-
    res.json({
       message: 'User logged in successfully',
    })
 
  } catch (error) {
-    if(error instanceof ZodError){
-     res.status(400).json(error.issues.map((item) => {
-       return {
-        message: item.message,
-        path: item.path[0],
-        code: item.code,
-       }
-    }))
-   }
+   res.status(400).json(error)
  }
 }
 
