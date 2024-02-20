@@ -1,20 +1,10 @@
 
-import { ZodError, z } from 'zod'
+import { ZodError } from 'zod'
 import { comparePassword, encryptPassword } from '../middleware/bcrypt.js'
+import { generarToken } from '../middleware/jwt.js'
+import { loginUserSchema, registerUserSchema } from '../middleware/validate.js'
 
 import User from '../models/User.js'
-import { generarToken } from '../middleware/jwt.js'
-
-const registerUserSchema = z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
-    password: z.string().min(6),
- }) 
-
- const loginUserSchema = z.object({
-   email: z.string().email(),
-   password: z.string().min(6),
-}) 
 
 export const register  = async (req,res) => {
    try {
@@ -99,3 +89,41 @@ export const login  = async (req,res) => {
    }
  }
 }
+
+export const logout = async (req, res) => {
+   res.cookie('token', '')
+   res.json({
+      message: 'User logged out successfully',
+   })
+ }
+
+export const profile = async (req, res) => {
+  const user = await User.findById(req.user.id)
+
+  const newUser ={
+    username: user.username,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  }
+  res.json(newUser)
+}
+
+export const getUser = async (req, res) => {
+  try {
+     const { page, limit } = req.query
+     if(page){
+        const users = await User.paginate({},{ page, limit })
+        res.json(users)
+     }else{
+        const users = await User.paginate({},{page:1, limit:5})
+        res.json(users)
+     }
+
+  } catch (error) {
+    res.json({
+      message: 'error' + error
+    })
+  }
+}
+

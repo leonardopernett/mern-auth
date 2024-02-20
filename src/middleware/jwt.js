@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-
+import User from "../models/User.js"
 
 export const generarToken = async (user) => {
   return new Promise((resolve, reject) => {
@@ -9,19 +9,23 @@ export const generarToken = async (user) => {
        }
   
        resolve(token)
-    })  
+    })   
   })
 }
 
 
-export const validarToken = (token) => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, 'secretkey12456', (err, decoded) => {
-       if(err){
-         reject(error)
-       }
+export const verifyToken = async  (req,res, next) => {
+    
+  const { token } = req.cookies
+  if(!token) return res.status(401).json({ msg: 'No autorizado' }
+  )
+  const payload = jwt.verify(token, 'secretkey12456')
 
-       resolve(decoded)
-    })
- })
+  try {
+    if(!payload) return res.status(401).json({ msg:'No autorizado' })
+    req.user = payload
+    next()
+  } catch (error) {
+     res.status(401).json({ msg: 'No autorizado' })
+  }
 }
