@@ -1,11 +1,8 @@
 
-import axios from 'axios'
+export const loginRequest = (user) => {
+  
+}
 
-const http = axios.create({
-   baseURL:'http://localhost:3000',
-})
-
-
-export const login = () => {}
-
-export const register = () => {}
+export const registerRequest = (user) => {
+   
+}

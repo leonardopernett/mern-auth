@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 
-body {
-  color-scheme: dark light;
+html {
+  background-color: #202020 !important;
+}
+
+ body {
+  @apply dark h-screen text-white
 }
