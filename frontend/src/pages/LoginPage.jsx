@@ -1,17 +1,38 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input, Card, CardBody, Button } from "@nextui-org/react";
-import { format } from '@formkit/tempo'
-
+import { useAuth } from '../context/useAuthContext';
+import { useCallback, useEffect } from 'react';
+import { useAuthStore } from '../store/useAuthStore';
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const navigate = useNavigate()
+  const { login, isAuthenticated, error } = useAuth()
 
-  const onSubmit = (data) => {
-    console.log(data)
+  useEffect(() => {
+    if(isAuthenticated) {
+      return navigate('/tasks')
+    }
+  },[isAuthenticated])
+
+
+  useEffect(() => {
+    if(error) {
+      toast.error(error.message)
+    }
+  },[error])
+
+
+  const onSubmit = async (data) => {
+    await login(data)
+
   }
 
+
+  
   return (
     <section className="flex justify-center items-center h-screen">
       <Card className="mx-auto w-6/12 shadow-md mt-10 p-5 border-gray-800">
@@ -48,7 +69,7 @@ export default function LoginPage() {
             </div>
 
             <div className="grid">
-              <Button color='primary'>
+              <Button color='primary' type='submit'>
                 Login
               </Button>
             </div>

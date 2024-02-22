@@ -11,7 +11,7 @@ const app = express()
 
 app.disable('x-powered-by')
 
-//mongoDB
+//mongoDB 
 mongoConnect();
  
 //middleware
@@ -19,7 +19,10 @@ app.use(morgan('dev'))
 app.use(cookie())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cors())
+app.use(cors({
+  origin:'http://localhost:5173',
+  credentials:true
+}))
 
 //router
 app.use('/api',useAuthRouter)

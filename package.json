@@ -17,10 +17,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --env-file .env src/index.js"
+    "dev": "node --watch --env-file .env server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": ""
-}
+} 

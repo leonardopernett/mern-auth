@@ -43,7 +43,7 @@ export const login  = async (req,res) => {
    const user = await User.findOne({ email:response.email })
 
    if(!user){
-      res.status(400).json({
+     return res.status(400).json({
          message: 'User or password incorrect',
          statusCode:400
       })
@@ -52,7 +52,7 @@ export const login  = async (req,res) => {
    const match = await comparePassword(response.password, user.password)
 
    if(!match){
-      res.status(400).json({
+      return res.status(400).json({
          message: 'User or password incorrect',
          statusCode:400
       })
@@ -60,12 +60,15 @@ export const login  = async (req,res) => {
 
    const token = await generarToken(user)
    res.cookie('token', token)
-   res.json({
+
+   return res.status(200).json({
       message: 'User logged in successfully',
+      statusCode:200,
+      user
    })
 
  } catch (error) {
-   res.status(400).json(error)
+   return res.status(400).json(error)
  }
 }
 
@@ -79,7 +82,7 @@ export const logout = async (req, res) => {
 export const profile = async (req, res) => {
   const user = await User.findById(req.user.id)
 
-  const newUser ={
+  const newUser = {
     username: user.username,
     email: user.email,
     createdAt: user.createdAt,
